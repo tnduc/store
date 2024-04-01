@@ -2,11 +2,13 @@
 import {
   ProductOutlined,
   CrownFilled,
-  BugOutlined
+  BugOutlined,
+  LogoutOutlined
 } from '@ant-design/icons';
 import Link from 'next/link'
 import dynamic from 'next/dynamic';
-import { ConfigProvider } from 'antd';
+import { ConfigProvider, Dropdown } from 'antd';
+import { usePathname } from 'next/navigation'
 import viVN from 'antd/lib/locale/vi_VN';
 
 const AdminLayout = ({
@@ -17,6 +19,12 @@ const AdminLayout = ({
   const ProLayout = dynamic(
     () => import("@ant-design/pro-components").then((com) => com.ProLayout), { ssr: false }
   );
+
+  const pathname = usePathname()
+
+  if (pathname === '/admin/login') {
+    return <ConfigProvider locale={viVN}>{children}</ConfigProvider>
+  }
 
   return (
     <ConfigProvider locale={viVN}>
@@ -56,6 +64,23 @@ const AdminLayout = ({
           src: 'https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg',
           size: 'small',
           title: 'Administrator',
+          render: (_, dom) => {
+            return (
+              <Dropdown
+                menu={{
+                  items: [
+                    {
+                      key: 'logout',
+                      icon: <LogoutOutlined />,
+                      label: 'Đăng xuất',
+                    },
+                  ],
+                }}
+              >
+                {dom}
+              </Dropdown>
+            );
+          }
         }}
         menuItemRender={(item: any, dom) => (
           <Link href={item.path}>{dom}</Link>
