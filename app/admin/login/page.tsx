@@ -12,28 +12,37 @@ import {
 	ProFormCheckbox,
 	ProFormText,
 } from '@ant-design/pro-components';
-import { Tabs, theme } from 'antd';
+import { Tabs } from 'antd';
 
 const Page = () => {
+	const [errors, setErrors] = useState([])
+	const [status, setStatus]: any = useState(null)
 
-	// const { login } = useAuth({
-	// 	middleware: 'guest',
-	// 	redirectIfAuthenticated: '/admin',
-	// })
+	const router: any = useRouter()
+	const { login } = useAuth({
+		middleware: 'guest',
+		redirectIfAuthenticated: '/admin',
+	})
 
+	useEffect(() => {
+        if (router.reset?.length > 0 && errors.length === 0) {
+            setStatus(atob(router.reset))
+        } else {
+            setStatus(null)
+        }
+    })
 
-	const onSubmit = (values: any) => {
-
-		console.log(values);
-
-		// login({
-		// 	email,
-		// 	password,
-		// 	remember: shouldRemember,
-		// 	setErrors,
-		// 	setStatus,
-		// })
+	const onFinish = async ({ email, password, remember }: any) => {
+		login({
+			email,
+			password,
+			remember,
+			setErrors,
+			setStatus,
+		})
 	}
+
+	console.log(status);
 
 	return (
 		<div
@@ -52,6 +61,10 @@ const Page = () => {
 					backdropFilter: 'blur(4px)',
 				}}
 				subTitle="Hệ thống quản lý bán hàng"
+				onFinish={onFinish}
+				initialValues={{
+					remember: false
+				}}
 			>
 				<Tabs centered activeKey="account" items={[{
 					label: 'Thông tin đăng nhập',
@@ -96,7 +109,7 @@ const Page = () => {
 						marginBlockEnd: 24,
 					}}
 				>
-					<ProFormCheckbox noStyle name="autoLogin">
+					<ProFormCheckbox noStyle name="remember">
 						Ghi nhớ
 					</ProFormCheckbox>
 				</div>
