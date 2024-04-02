@@ -6,7 +6,6 @@ import {
   ProCard,
   ProForm,
   ProFormCheckbox,
-  ProFormDependency,
   ProFormDigit,
   ProFormSelect,
   ProFormText,

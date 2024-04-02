@@ -1,11 +1,14 @@
+"use client"
 import { EllipsisOutlined } from '@ant-design/icons';
 import type { ProColumns } from '@ant-design/pro-components';
 import {
   LightFilter,
+  PageContainer,
   ProFormDatePicker,
   ProTable,
 } from '@ant-design/pro-components';
 import { Button } from 'antd';
+import Link from 'next/link'
 
 export type TableListItem = {
   key: number;
@@ -66,43 +69,50 @@ const columns: ProColumns<TableListItem>[] = [
   },
 ];
 
-export default () => {
+const List = () => {
   return (
-    <ProTable<TableListItem>
-      columns={columns}
-      request={(params, sorter, filter) => {
-        // 表单搜索项会从 params 传入，传递给后端接口。
-        console.log(params, sorter, filter);
-        return Promise.resolve({
-          data: tableListDataSource,
-          success: true,
-        });
+    <PageContainer
+      header={{
+        title: 'Danh sách sản phẩm',
       }}
-      toolbar={{
-        search: {
-          onSearch: (value: string) => {
-            alert(value);
+    >
+      <ProTable<TableListItem>
+        columns={columns}
+        request={(params, sorter, filter) => {
+          // 表单搜索项会从 params 传入，传递给后端接口。
+          console.log(params, sorter, filter);
+          return Promise.resolve({
+            data: tableListDataSource,
+            success: true,
+          });
+        }}
+        toolbar={{
+          search: {
+            onSearch: (value: string) => {
+              alert(value);
+            },
+            placeholder: "Tìm kiếm..."
           },
-        },
-        filter: (
-          <LightFilter>
-            <ProFormDatePicker name="startdate" label="响应日期" />
-          </LightFilter>
-        ),
-        actions: [
-          <Button
-            key="primary"
-            type="primary"
-            onClick={() => {
-              alert('add');
-            }}
-          >
-            添加
-          </Button>,
-        ],
-      }}
-      rowKey="key"
-      search={false}
-    />
+          filter: (
+            <LightFilter>
+              <ProFormDatePicker name="startdate" label="Ngày" />
+            </LightFilter>
+          ),
+          actions: [
+            <Link href="/products/create" key="primary">
+              <Button
+                type="primary"
+              >
+                Thêm sản phẩm
+              </Button>
+            </Link>
+          ],
+        }}
+        rowKey="key"
+        search={false}
+      />
+    </PageContainer>
   );
 };
+
+export default List;

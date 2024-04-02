@@ -6,23 +6,28 @@ import {
   LogoutOutlined
 } from '@ant-design/icons';
 import Link from 'next/link'
-import dynamic from 'next/dynamic';
 import { ConfigProvider, Dropdown } from 'antd';
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation';
+import { useAuth } from '@/hooks/auth';
 import viVN from 'antd/lib/locale/vi_VN';
+import Loading from './loading';
+import { ProLayout } from '@ant-design/pro-components'
 
 const AdminLayout = ({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
-  const ProLayout = dynamic(
-    () => import("@ant-design/pro-components").then((com) => com.ProLayout), { ssr: false }
-  );
+  const router = useRouter()
+  const { user } = useAuth({ middleware: 'auth' })
+
+  if (!user) {
+    return <Loading />
+  }
 
   const pathname = usePathname()
 
-  if (pathname === '/admin/login') {
+  if (pathname === '/login') {
     return <ConfigProvider locale={viVN}>{children}</ConfigProvider>
   }
 
@@ -36,19 +41,19 @@ const AdminLayout = ({
           key: "admin",
           children: [
             {
-              path: '/admin/products',
+              path: '/products',
               name: 'Sản phẩm',
               icon: <ProductOutlined />,
               key: "products",
               routes: [
                 {
-                  path: '/admin/products/list',
+                  path: '/products/list',
                   name: 'Danh sách',
                   icon: <CrownFilled />,
                   key: "list"
                 },
                 {
-                  path: '/admin/attributes',
+                  path: '/attributes',
                   name: 'Thuộc tính',
                   icon: <CrownFilled />,
                 },
@@ -90,6 +95,7 @@ const AdminLayout = ({
         layout="top"
         fixedHeader
         contentWidth='Fixed'
+        onMenuHeaderClick={() => router.push('/dashboard', { scroll: false })}
       >
         {children}
       </ProLayout>

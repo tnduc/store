@@ -16,7 +16,7 @@ const ProFormUnit = () => {
 
   const addItem = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
     e.preventDefault();
-    setUnits([...units, name || `New item ${index++}`]);
+    setUnits([]);
     setName('');
     setTimeout(() => {
       inputRef.current?.focus();
