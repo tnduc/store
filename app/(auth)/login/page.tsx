@@ -12,37 +12,40 @@ import {
 	ProFormCheckbox,
 	ProFormText,
 } from '@ant-design/pro-components';
-import { Tabs } from 'antd';
+import { Tabs, Alert } from 'antd';
 
 const Page = () => {
 	const [errors, setErrors] = useState([])
 	const [status, setStatus]: any = useState(null)
+	const [loading, setLoading]: any = useState(false)
 
 	const router: any = useRouter()
 	const { login } = useAuth({
 		middleware: 'guest',
-		redirectIfAuthenticated: '/admin',
+		redirectIfAuthenticated: '/products',
 	})
 
 	useEffect(() => {
-        if (router.reset?.length > 0 && errors.length === 0) {
-            setStatus(atob(router.reset))
-        } else {
-            setStatus(null)
-        }
-    })
+		if (router.reset?.length > 0 && errors.length === 0) {
+			setStatus(atob(router.reset))
+		} else {
+			setStatus(null)
+		}
+	})
 
 	const onFinish = async ({ email, password, remember }: any) => {
-		login({
+		setLoading(true)
+		await login({
 			email,
 			password,
 			remember,
 			setErrors,
 			setStatus,
 		})
+		setLoading(false)
 	}
 
-	console.log(status);
+	console.log(errors);
 
 	return (
 		<div
@@ -65,12 +68,14 @@ const Page = () => {
 				initialValues={{
 					remember: false
 				}}
+				loading={loading}
 			>
 				<Tabs centered activeKey="account" items={[{
 					label: 'Thông tin đăng nhập',
 					key: 'account'
 				}]} />
 				<>
+					{errors.length > 0 && <Alert message={errors} type="error" style={{ marginBottom: 16 }} />}
 					<ProFormText
 						name="email"
 						fieldProps={{
