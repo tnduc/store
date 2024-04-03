@@ -47,7 +47,7 @@ const AdminLayout = ({
               key: "products",
               routes: [
                 {
-                  path: '/products/list',
+                  path: '/products',
                   name: 'Danh sách',
                   icon: <CrownFilled />,
                   key: "list"
