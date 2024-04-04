@@ -27,7 +27,7 @@ const AdminLayout = ({
 
   const pathname = usePathname()
 
-  if (pathname === '/login') {
+  if (['/login', '/pos'].includes(pathname)) {
     return <ConfigProvider locale={viVN}>{children}</ConfigProvider>
   }
 
@@ -35,10 +35,6 @@ const AdminLayout = ({
     <ConfigProvider locale={viVN}>
       <ProLayout
         route={{
-          path: '/admin',
-          name: 'Admin',
-          icon: <CrownFilled />,
-          key: "admin",
           children: [
             {
               path: '/products',
