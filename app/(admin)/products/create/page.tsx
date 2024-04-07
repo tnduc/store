@@ -7,6 +7,8 @@ import {
   ProForm,
   ProFormCheckbox,
   ProFormDigit,
+  ProFormInstance,
+  ProFormMoney,
   ProFormSelect,
   ProFormText,
   ProFormTextArea,
@@ -14,24 +16,27 @@ import {
 import { Col, Space } from 'antd';
 import ProFormUnit from '../_components/ProFormUnit'
 import ProFormAttribute from '../_components/ProFormAttribute';
+import { useRef } from 'react';
 
 const CreateProduct = () => {
+  const formRef = useRef<ProFormInstance>();
+
   return (
     <PageContainer title="Thêm sản phẩm mới">
       <ProForm
+        formRef={formRef}
         submitter={{
           render: (_, dom) => <FooterToolbar>{dom}</FooterToolbar>,
         }}
         onFinish={async (values) => console.log(values)}
-        // size='large'
         grid
         rowProps={{ gutter: 16 }}
         initialValues={{
-          unit: [],
           attribute: [],
+          hasUnit: [false]
         }}
       >
-        <Col md={18} xs={24}>
+        <Col md={17} xs={24}>
           <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
             <ProCard>
               <ProFormText
@@ -42,19 +47,16 @@ const CreateProduct = () => {
               />
               <ProFormTextArea label="Mô tả" name="description" />
             </ProCard>
-            <ProCard title="Hình ảnh">
-              <UploadImage />
-            </ProCard>
             <ProCard title="Giá sản phẩm">
               <ProForm.Group>
-                <ProFormDigit
+                <ProFormMoney
                   name="wholesale"
                   label="Giá đại lý"
                   rules={[{ required: true, message: '' }]}
                   required={false}
                   colProps={{ md: 12 }}
                 />
-                <ProFormDigit
+                <ProFormMoney
                   name="retail"
                   label="Giá bán lẻ"
                   rules={[{ required: true, message: '' }]}
@@ -92,7 +94,7 @@ const CreateProduct = () => {
           </Space>
         </Col>
         <br />
-        <Col md={6} xs={24}>
+        <Col md={7} xs={24}>
           <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
             <ProCard title="Trạng thái" >
               <ProFormCheckbox.Group
@@ -112,6 +114,9 @@ const CreateProduct = () => {
                 name="category"
                 label="Loại sản phẩm"
               />
+            </ProCard>
+            <ProCard title="Hình ảnh">
+              <UploadImage />
             </ProCard>
           </Space>
         </Col>

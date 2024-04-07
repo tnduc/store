@@ -16,36 +16,22 @@ import { Tabs, Alert } from 'antd';
 
 const Page = () => {
 	const [errors, setErrors] = useState([])
-	const [status, setStatus]: any = useState(null)
 	const [loading, setLoading]: any = useState(false)
 
-	const router: any = useRouter()
 	const { login } = useAuth({
 		middleware: 'guest',
-		redirectIfAuthenticated: '/products',
-	})
-
-	useEffect(() => {
-		if (router.reset?.length > 0 && errors.length === 0) {
-			setStatus(atob(router.reset))
-		} else {
-			setStatus(null)
-		}
+		redirectIfAuthenticated: '/dashboard',
 	})
 
 	const onFinish = async ({ email, password, remember }: any) => {
-		setLoading(true)
 		await login({
 			email,
 			password,
 			remember,
 			setErrors,
-			setStatus,
+			setLoading
 		})
-		setLoading(false)
 	}
-
-	console.log(errors);
 
 	return (
 		<div

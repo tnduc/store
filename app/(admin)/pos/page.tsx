@@ -1,9 +1,13 @@
 'use client'
 import { ProCard } from '@ant-design/pro-components';
 import { useRef, useState } from 'react';
-import { Input } from 'antd';
+import { Input, Button } from 'antd';
+import { PlusOutlined } from '@ant-design/icons'
+import CustomerComponent from './_components/CustomerComponent';
 
 type TargetKey = React.MouseEvent | React.KeyboardEvent | string;
+
+const { Search } = Input;
 
 const initialItems = [
   {
@@ -68,19 +72,23 @@ const POS = () => {
 
   return (
     <ProCard split="vertical">
-      <ProCard title={<Input />}
-        extra={[<Input />]}
+      <ProCard
         tabs={{
           type: "editable-card",
           onChange,
           activeKey,
           onEdit,
           items,
-        }}>
+        }}
+      >
         左侧内容
       </ProCard>
-      <ProCard title="左右分栏子卡片带标题" colSpan="30%" headerBordered>
-        <div style={{ height: 360 }}>右侧内容</div>
+      <ProCard
+        title={false}
+        colSpan="20%"
+        headerBordered
+      >
+        <CustomerComponent />
       </ProCard>
     </ProCard>
   );

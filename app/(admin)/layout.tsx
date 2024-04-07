@@ -3,29 +3,29 @@ import {
   ProductOutlined,
   CrownFilled,
   BugOutlined,
-  LogoutOutlined
+  LogoutOutlined,
+  ShopOutlined,
+  LoadingOutlined
 } from '@ant-design/icons';
 import Link from 'next/link'
-import { ConfigProvider, Dropdown } from 'antd';
+import { ConfigProvider, Dropdown, Button } from 'antd';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/auth';
 import viVN from 'antd/lib/locale/vi_VN';
-import Loading from './loading';
-import { ProLayout } from '@ant-design/pro-components'
+import { PageLoading, ProLayout } from '@ant-design/pro-components'
 
 const AdminLayout = ({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
+  const pathname = usePathname()
   const router = useRouter()
-  const { user } = useAuth({ middleware: 'auth' })
+  const { user, logout } = useAuth({ middleware: 'auth' })
 
   if (!user) {
-    return <Loading />
+    return <PageLoading />
   }
-
-  const pathname = usePathname()
 
   if (['/login', '/pos'].includes(pathname)) {
     return <ConfigProvider locale={viVN}>{children}</ConfigProvider>
@@ -57,14 +57,21 @@ const AdminLayout = ({
             },
           ],
         }}
+        actionsRender={(props) => {
+          if (props.isMobile) return [];
+          if (typeof window === 'undefined') return [];
+          return [
+            <Button icon={<ShopOutlined />} key="pos" type='text' onClick={() => router.push('/pos')}>Bán hàng </Button>
+          ];
+        }}
         location={{
-          pathname: '/admin',
+          pathname: '/products',
         }}
         splitMenus
         avatarProps={{
           src: 'https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg',
           size: 'small',
-          title: 'Administrator',
+          title: user.name,
           render: (_, dom) => {
             return (
               <Dropdown
@@ -74,6 +81,7 @@ const AdminLayout = ({
                       key: 'logout',
                       icon: <LogoutOutlined />,
                       label: 'Đăng xuất',
+                      onClick: logout
                     },
                   ],
                 }}
@@ -86,7 +94,7 @@ const AdminLayout = ({
         menuItemRender={(item: any, dom) => (
           <Link href={item.path}>{dom}</Link>
         )}
-        title="Store version 1"
+        title="Store"
         logo={<BugOutlined />}
         layout="top"
         fixedHeader

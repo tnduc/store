@@ -1,64 +1,68 @@
 import { ProForm, ProFormCheckbox, ProFormDependency, ProFormDigit, ProFormList, ProFormMoney, ProFormSelect, ProFormText } from "@ant-design/pro-components";
-import { Divider, Space, Input, Button } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { Divider, Input } from 'antd';
+import { SendOutlined } from '@ant-design/icons';
 import { useRef, useState } from "react";
 import type { InputRef } from 'antd';
+import { useProduct } from '@/hooks/product';
+
+const { Search } = Input;
 
 const ProFormUnit = () => {
-  const [units, setUnits] = useState([]);
-
+  const [units, setUnits]: any = useState([]);
   const [name, setName] = useState('');
   const inputRef = useRef<InputRef>(null);
+  const { unitSearch, unitStore } = useProduct();
 
   const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
   };
 
-  const addItem = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
-    e.preventDefault();
-    setUnits([]);
-    setName('');
-    setTimeout(() => {
-      inputRef.current?.focus();
-    }, 0);
+  const addUnit = async (name: string) => {
+    await unitStore({ name })
+
+    console.log(inputRef);
+    
+    // setUnits([...units, name]);
+    // setName('');
+    // setTimeout(() => {
+    //   inputRef.current?.focus();
+    // }, 0);
+
   };
 
   return (<>
-    <ProFormCheckbox.Group name="unit" layout='horizontal' options={[{
+    <ProFormCheckbox.Group name="hasUnit" layout='horizontal' options={[{
       label: "Biến thể có nhiều đơn vị tính (ví dụ: lon, lốc, thùng...)",
       value: true
     }]} />
 
-    <ProFormDependency name={['unit']}>
-      {({ unit }) => {
-        if (unit && !unit[0]) {
-          return <></>;
+    <ProFormDependency name={['hasUnit']}>
+      {({ hasUnit }) => {
+        if (!hasUnit[0]) {
+          return
         }
 
         return (<>
-          <ProFormSelect name={["units", "unit"]} label="Đơn vị cơ bản" tooltip="Đơn vị nhỏ nhất của sản phẩm như lon, hộp..."
+          <ProFormSelect name="unit" label="Đơn vị cơ bản" tooltip="Đơn vị nhỏ nhất của sản phẩm như lon, hộp..."
             colProps={{ md: 8 }}
             rules={[{ required: true, message: '' }]}
             required={false}
             showSearch
+            debounceTime={500}
+            request={(value) => {
+              unitSearch
+            }}
+            inputRef={inputRef}
             fieldProps={{
               dropdownRender: (menu) => (
                 <>
                   {menu}
                   <Divider style={{ margin: '8px 0' }} />
-                  <Space style={{ padding: '0 8px 4px' }}>
-                    <Input
-                      placeholder="Thêm đơn vị mới"
-                      ref={inputRef}
-                      value={name}
-                      onChange={onNameChange}
-                      onKeyDown={(e) => e.stopPropagation()}
-                    />
-                    <Button type="text" icon={<PlusOutlined />} onClick={addItem} />
-                  </Space>
+                  <Search placeholder="Thêm đơn vị" enterButton={<SendOutlined />} onSearch={addUnit} />
                 </>
               )
             }}
+            options={units}
           />
           <ProFormList
             name={['units']}
